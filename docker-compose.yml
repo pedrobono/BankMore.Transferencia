@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  transfer-service:
+    build:
+      context: ./src/BankMore.TransferService
+      dockerfile: Dockerfile
+    container_name: bankmore-transfer-service
+    ports:
+      - "8082:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/transfers.db
+      - Jwt__Secret=${JWT_SECRET:-sua-chave-secreta-super-segura-com-pelo-menos-32-caracteres}
+      - Jwt__Issuer=BankMore
+      - Jwt__Audience=BankMore
+      - AccountService__BaseUrl=http://account-service:8080
+      - AccountService__TimeoutSeconds=30
+    volumes:
+      - transfer-data:/app/data
+    networks:
+      - bankmore-network
+    restart: unless-stopped
+    depends_on:
+      - account-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Placeholder para Account Service (deve ser configurado separadamente)
+  account-service:
+    image: bankmore-account-service:latest
+    container_name: bankmore-account-service
+    ports:
+      - "8081:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - Jwt__Secret=${JWT_SECRET:-sua-chave-secreta-super-segura-com-pelo-menos-32-caracteres}
+    networks:
+      - bankmore-network
+    restart: unless-stopped
+
+volumes:
+  transfer-data:
+    driver: local
+
+networks:
+  bankmore-network:
+    driver: bridge

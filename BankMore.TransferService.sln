@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D758417E-F197-4F7C-85AC-B3663DDF180F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankMore.TransferService", "src\BankMore.TransferService\BankMore.TransferService.csproj", "{962D91F7-8CAA-4A97-BD2A-300594594CFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankMore.TransferService.Tests", "src\BankMore.TransferService.Tests\BankMore.TransferService.Tests.csproj", "{B3283E0B-58EA-4D48-A348-737DA326B49C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{962D91F7-8CAA-4A97-BD2A-300594594CFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{962D91F7-8CAA-4A97-BD2A-300594594CFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{962D91F7-8CAA-4A97-BD2A-300594594CFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{962D91F7-8CAA-4A97-BD2A-300594594CFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3283E0B-58EA-4D48-A348-737DA326B49C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3283E0B-58EA-4D48-A348-737DA326B49C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3283E0B-58EA-4D48-A348-737DA326B49C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3283E0B-58EA-4D48-A348-737DA326B49C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{962D91F7-8CAA-4A97-BD2A-300594594CFA} = {D758417E-F197-4F7C-85AC-B3663DDF180F}
+		{B3283E0B-58EA-4D48-A348-737DA326B49C} = {D758417E-F197-4F7C-85AC-B3663DDF180F}
+	EndGlobalSection
+EndGlobal
