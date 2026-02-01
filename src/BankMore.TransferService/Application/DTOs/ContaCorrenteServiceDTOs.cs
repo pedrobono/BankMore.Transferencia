@@ -2,7 +2,7 @@ namespace BankMore.TransferService.Application.DTOs;
 
 public record CriarMovimentoRequest(
     string RequestId,
-    string? NumeroConta,
+    Guid? ContaId,
     decimal Valor,
     string Tipo
 );

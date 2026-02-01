@@ -47,18 +47,32 @@ public class CriarTransferenciaCommandHandler : IRequestHandler<CriarTransferenc
             Guid.Empty,
             request.Valor);
 
+        Guid idContaDestino = Guid.Empty;
+
         try
         {
+            _logger.LogInformation("🔍 Resolvendo ID da conta destino {NumeroConta}...", request.NumeroContaDestino);
+            idContaDestino = await _accountService.ResolveAccountIdAsync(request.NumeroContaDestino, request.TokenAutorizacao);
+            
             _logger.LogInformation("💸 [ETAPA 1/2] Debitando R$ {Value:N2} da conta origem...", request.Valor);
             await DebitOriginAsync(request);
             _logger.LogInformation("✅ Débito realizado com sucesso");
 
-            _logger.LogInformation("💰 [ETAPA 2/2] Creditando R$ {Value:N2} na conta destino {Destination}...", 
-                request.Valor, request.NumeroContaDestino);
-            await CreditDestinationAsync(request);
+            _logger.LogInformation("💰 [ETAPA 2/2] Creditando R$ {Value:N2} na conta destino {IdConta}...", 
+                request.Valor, idContaDestino);
+            await CreditDestinationAsync(request, idContaDestino);
             _logger.LogInformation("✅ Crédito realizado com sucesso");
 
+            // Atualizar transferência com ID da conta destino
+            typeof(Transferencia).GetProperty(nameof(Transferencia.IdContaCorrenteDestino))!
+                .SetValue(transfer, idContaDestino);
+
             await _repository.CreateAsync(transfer);
+            
+            // Salvar idempotência
+            var requisicao = System.Text.Json.JsonSerializer.Serialize(request);
+            await _repository.SaveIdempotenciaAsync(request.IdContaOrigem, request.RequestId, requisicao, "SUCCESS");
+            
             _logger.LogInformation("✅ ========== TRANSFERÊNCIA CONCLUÍDA COM SUCESSO ==========\n");
 
             return Unit.Value;
@@ -93,18 +107,18 @@ public class CriarTransferenciaCommandHandler : IRequestHandler<CriarTransferenc
     {
         var debitRequest = new CriarMovimentoRequest(
             request.RequestId,
-            null,
+            null, // ContaId null = usa conta do token
             request.Valor,
             "D");
 
         await _accountService.CreateMovementAsync(debitRequest, request.TokenAutorizacao);
     }
 
-    private async Task CreditDestinationAsync(CriarTransferenciaCommand request)
+    private async Task CreditDestinationAsync(CriarTransferenciaCommand request, Guid idContaDestino)
     {
         var creditRequest = new CriarMovimentoRequest(
             request.RequestId,
-            request.NumeroContaDestino,
+            idContaDestino, // ContaId da conta destino
             request.Valor,
             "C");
 
@@ -125,7 +139,7 @@ public class CriarTransferenciaCommandHandler : IRequestHandler<CriarTransferenc
 
                 var compensationRequest = new CriarMovimentoRequest(
                     $"{request.RequestId}-COMP",
-                    null,
+                    null, // ContaId null = credita na conta do token (origem)
                     request.Valor,
                     "C");
 

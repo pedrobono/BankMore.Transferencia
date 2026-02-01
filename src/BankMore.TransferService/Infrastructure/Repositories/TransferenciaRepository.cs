@@ -18,19 +18,20 @@ public class TransferenciaRepository : ITransferenciaRepository
     {
         using var connection = new SqliteConnection(_connectionString);
         
-        var sql = @"
-            SELECT idtransferencia, idcontacorrente_origem, idcontacorrente_destino, 
-                   datamovimento, valor
-            FROM transferencia
-            WHERE idcontacorrente_origem = @OriginAccountId
-            LIMIT 1";
-
-        var row = await connection.QueryFirstOrDefaultAsync<TransferenciaDto>(sql, new
+        // Verificar idempotência na tabela separada
+        var idempotenciaKey = $"{originAccountId}:{requestId}";
+        var sqlIdem = "SELECT resultado FROM idempotencia WHERE chave_idempotencia = @Key";
+        
+        var resultado = await connection.QueryFirstOrDefaultAsync<string>(sqlIdem, new { Key = idempotenciaKey });
+        
+        if (resultado != null)
         {
-            OriginAccountId = originAccountId.ToString()
-        });
-
-        return row?.ToEntity();
+            // Já foi processado, retornar uma transferência fake para indicar idempotência
+            var transfer = (Transferencia)Activator.CreateInstance(typeof(Transferencia), true)!;
+            return transfer;
+        }
+        
+        return null;
     }
 
     public async Task<Guid> CreateAsync(Transferencia transfer)
@@ -52,6 +53,23 @@ public class TransferenciaRepository : ITransferenciaRepository
         });
 
         return transfer.IdTransferencia;
+    }
+
+    public async Task SaveIdempotenciaAsync(Guid originAccountId, string requestId, string requisicao, string resultado)
+    {
+        using var connection = new SqliteConnection(_connectionString);
+        
+        var idempotenciaKey = $"{originAccountId}:{requestId}";
+        var sql = @"
+            INSERT INTO idempotencia (chave_idempotencia, requisicao, resultado)
+            VALUES (@Key, @Requisicao, @Resultado)";
+
+        await connection.ExecuteAsync(sql, new
+        {
+            Key = idempotenciaKey,
+            Requisicao = requisicao,
+            Resultado = resultado
+        });
     }
 
     private class TransferenciaDto

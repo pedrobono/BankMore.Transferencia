@@ -21,7 +21,7 @@ public class DatabaseHealthCheck : IHealthCheck
             await connection.OpenAsync(cancellationToken);
 
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT COUNT(*) FROM transfers";
+            command.CommandText = "SELECT COUNT(*) FROM transferencia";
             var count = await command.ExecuteScalarAsync(cancellationToken);
 
             return HealthCheckResult.Healthy($"Database is healthy. {count} transfers registered.");

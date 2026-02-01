@@ -276,33 +276,29 @@ ALTER TABLE transfers ADD COLUMN new_field TEXT;
 
 ### Schema
 
-**Tabela `transfers`:**
+**Tabela `transferencia`:**
 ```sql
-CREATE TABLE transfers (
-    id TEXT PRIMARY KEY,
-    request_id TEXT NOT NULL,
-    origin_account_id TEXT NOT NULL,
-    destination_account_id TEXT NOT NULL,
-    value REAL NOT NULL,
-    status TEXT NOT NULL,
-    error_message TEXT,
-    error_type TEXT,
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL,
-    CONSTRAINT uq_origin_request UNIQUE(origin_account_id, request_id)
+CREATE TABLE transferencia (
+    idtransferencia TEXT(37) PRIMARY KEY,
+    idcontacorrente_origem TEXT(37) NOT NULL,
+    idcontacorrente_destino TEXT(37) NOT NULL,
+    datamovimento TEXT(25) NOT NULL,
+    valor REAL NOT NULL
 );
-
-CREATE INDEX idx_transfers_request_id ON transfers(request_id);
-CREATE INDEX idx_transfers_origin_created ON transfers(origin_account_id, created_at);
 ```
 
-**Status possíveis:**
-| Status | Descrição |
-|--------|-----------|
-| `Success` | Transferência concluída com sucesso |
-| `Failed` | Falhou no débito (não chegou a debitar) |
-| `Compensated` | Debitou, falhou no crédito, compensou com sucesso |
-| `CompensationFailed` | Debitou, falhou no crédito, **falhou na compensação** (CRÍTICO!) |
+**Tabela `idempotencia`:**
+```sql
+CREATE TABLE idempotencia (
+    chave_idempotencia TEXT(37) PRIMARY KEY,
+    requisicao TEXT(1000),
+    resultado TEXT(1000)
+);
+```
+
+**Idempotência:**
+- Chave: `{idContaOrigem}:{requestId}`
+- Armazena requisição e resultado para evitar duplicação
 
 **Tabela de controle DbUp:**
 ```sql
@@ -378,39 +374,57 @@ O Transfer Service **depende** do Account Service para todas as operações.
 
 ### Endpoints Consumidos
 
-#### 1. POST `/api/Movimento` (Débito)
+#### 1. POST `/api/Conta/resolve` (Resolver ID da Conta)
+```json
+{
+  "numeroConta": "70110-0"
+}
+```
+**Response:**
+```json
+{
+  "contaId": "ca960f46-ef11-4846-abfa-e2a98cbdd263",
+  "numeroConta": "70110-0"
+}
+```
+- Usado para obter o ID da conta pelo número
+
+#### 2. POST `/api/Movimento` (Débito)
 ```json
 {
   "requestId": "550e8400-e29b-41d4-a716-446655440000",
+  "contaId": null,
   "valor": 150.75,
   "tipo": "D"
 }
 ```
 - Usado para debitar a conta de origem
-- `numeroConta` omitido = usa conta do token
+- `contaId` null = usa conta do token
 
-#### 2. POST `/api/Movimento` (Crédito)
+#### 3. POST `/api/Movimento` (Crédito)
 ```json
 {
   "requestId": "550e8400-e29b-41d4-a716-446655440000",
-  "numeroConta": "85381-6",
+  "contaId": "ca960f46-ef11-4846-abfa-e2a98cbdd263",
   "valor": 150.75,
   "tipo": "C"
 }
 ```
 - Usado para creditar a conta de destino
-- `numeroConta` obrigatório
+- `contaId` obrigatório (ID resolvido)
 
-#### 3. POST `/api/Movimento` (Compensação)
+#### 4. POST `/api/Movimento` (Compensação)
 ```json
 {
   "requestId": "550e8400-e29b-41d4-a716-446655440000-COMP",
+  "contaId": null,
   "valor": 150.75,
   "tipo": "C"
 }
 ```
 - Usado para compensar (estornar) em caso de falha
 - `requestId` com sufixo `-COMP`
+- `contaId` null = credita na conta do token
 
 ### Autenticação
 - Todas as chamadas repassam o token JWT do cliente
