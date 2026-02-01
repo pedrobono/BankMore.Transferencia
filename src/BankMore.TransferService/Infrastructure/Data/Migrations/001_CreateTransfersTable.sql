@@ -1,19 +1,16 @@
--- Migration: 001_CreateTransfersTable.sql
--- Description: Cria tabela transfers com constraint UNIQUE e índices
+-- Migration: 001_CreateTransferenciaTable.sql
+-- Description: Cria tabelas transferencia e idempotencia
 
-CREATE TABLE transfers (
-    id TEXT PRIMARY KEY,
-    request_id TEXT NOT NULL,
-    origin_account_id TEXT NOT NULL,
-    destination_account_id TEXT NOT NULL,
-    value REAL NOT NULL,
-    status TEXT NOT NULL,
-    error_message TEXT,
-    error_type TEXT,
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL,
-    CONSTRAINT uq_origin_request UNIQUE(origin_account_id, request_id)
+CREATE TABLE transferencia (
+    idtransferencia TEXT(37) PRIMARY KEY,
+    idcontacorrente_origem TEXT(37) NOT NULL,
+    idcontacorrente_destino TEXT(37) NOT NULL,
+    datamovimento TEXT(25) NOT NULL,
+    valor REAL NOT NULL
 );
 
-CREATE INDEX idx_transfers_request_id ON transfers(request_id);
-CREATE INDEX idx_transfers_origin_created ON transfers(origin_account_id, created_at);
+CREATE TABLE idempotencia (
+    chave_idempotencia TEXT(37) PRIMARY KEY,
+    requisicao TEXT(1000),
+    resultado TEXT(1000)
+);

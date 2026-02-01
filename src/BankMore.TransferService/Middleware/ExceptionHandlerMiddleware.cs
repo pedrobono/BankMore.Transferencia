@@ -41,13 +41,13 @@ public class ExceptionHandlerMiddleware
                 message = string.Join("; ", validationEx.Errors.Select(e => e.ErrorMessage)),
                 failureType = "VALIDATION_ERROR"
             },
-            TransferException transferEx when transferEx is CompensationFailedException => new
+            TransferenciaException transferEx when transferEx is CompensacaoFalhaException => new
             {
                 statusCode = (int)HttpStatusCode.InternalServerError,
                 message = transferEx.Message,
                 failureType = transferEx.FailureType
             },
-            TransferException transferEx => new
+            TransferenciaException transferEx => new
             {
                 statusCode = (int)HttpStatusCode.BadRequest,
                 message = transferEx.Message,

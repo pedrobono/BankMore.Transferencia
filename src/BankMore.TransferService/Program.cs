@@ -118,10 +118,10 @@ try
     builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
     // Repositories
-    builder.Services.AddScoped<ITransferRepository>(sp => new TransferRepository(connectionString));
+    builder.Services.AddScoped<ITransferenciaRepository>(sp => new TransferenciaRepository(connectionString));
 
     // HttpClient para Account Service
-    builder.Services.AddHttpClient<IAccountServiceClient, AccountServiceClient>(client =>
+    builder.Services.AddHttpClient<IContaCorrenteServiceClient, ContaCorrenteServiceClient>(client =>
     {
         client.BaseAddress = new Uri(accountServiceUrl);
         client.Timeout = TimeSpan.FromSeconds(accountServiceTimeout);

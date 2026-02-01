@@ -2,27 +2,27 @@ using FluentValidation;
 
 namespace BankMore.TransferService.Application.Commands;
 
-public class CreateTransferCommandValidator : AbstractValidator<CreateTransferCommand>
+public class CriarTransferenciaCommandValidator : AbstractValidator<CriarTransferenciaCommand>
 {
-    public CreateTransferCommandValidator()
+    public CriarTransferenciaCommandValidator()
     {
         RuleFor(x => x.RequestId)
             .NotEmpty()
             .WithMessage("RequestId é obrigatório");
 
-        RuleFor(x => x.DestinationAccountNumber)
+        RuleFor(x => x.NumeroContaDestino)
             .NotEmpty()
             .WithMessage("Número da conta de destino é obrigatório");
 
-        RuleFor(x => x.Value)
+        RuleFor(x => x.Valor)
             .GreaterThan(0)
             .WithMessage("O valor deve ser maior que zero");
 
-        RuleFor(x => x.OriginAccountId)
+        RuleFor(x => x.IdContaOrigem)
             .NotEmpty()
             .WithMessage("Conta de origem é obrigatória");
 
-        RuleFor(x => x.AuthorizationToken)
+        RuleFor(x => x.TokenAutorizacao)
             .NotEmpty()
             .WithMessage("Token de autorização é obrigatório");
     }

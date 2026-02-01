@@ -10,12 +10,12 @@ namespace BankMore.TransferService.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize]
-public class TransfersController : ControllerBase
+public class TransferenciaController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly ILogger<TransfersController> _logger;
+    private readonly ILogger<TransferenciaController> _logger;
 
-    public TransfersController(IMediator mediator, ILogger<TransfersController> logger)
+    public TransferenciaController(IMediator mediator, ILogger<TransferenciaController> logger)
     {
         _mediator = mediator;
         _logger = logger;
@@ -34,7 +34,7 @@ public class TransfersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateTransfer([FromBody] CreateTransferRequest request)
+    public async Task<IActionResult> CreateTransfer([FromBody] CriarTransferenciaRequest request)
     {
         var originAccountId = GetAccountIdFromToken();
         var authToken = GetAuthorizationToken();
@@ -42,10 +42,10 @@ public class TransfersController : ControllerBase
         _logger.LogInformation("Recebida requisição de transferência. RequestId: {RequestId}, Origin: {Origin}",
             request.RequestId, originAccountId);
 
-        var command = new CreateTransferCommand(
+        var command = new CriarTransferenciaCommand(
             request.RequestId,
-            request.DestinationAccountNumber,
-            request.Value,
+            request.NumeroContaDestino,
+            request.Valor,
             originAccountId,
             authToken
         );
