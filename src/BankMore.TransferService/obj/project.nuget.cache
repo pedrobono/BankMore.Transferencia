@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "mAddiMXQtDJItpv2G7qSqe+I2iB/b7+GU0bWZOz4t+bu411lsiR3W5/cEV6gL+FOZF0ubq8OGITMX224gaa0VA==",
+  "dgSpecHash": "rm+hXZBBzj/u2DAOSksD4qoibkf/JthFEcyVYrY8JbtCZZheQt0ser945u94cGc1MvrkXKx/VSEj6QOTTmWl1Q==",
   "success": true,
   "projectFilePath": "/home/bono/Projetos Pessoais/BankMore.Transferencia/src/BankMore.TransferService/BankMore.TransferService.csproj",
   "expectedPackageFiles": [
     "/home/bono/.nuget/packages/dapper/2.1.66/dapper.2.1.66.nupkg.sha512",
+    "/home/bono/.nuget/packages/dbup-core/6.0.15/dbup-core.6.0.15.nupkg.sha512",
+    "/home/bono/.nuget/packages/dbup-sqlite/6.0.4/dbup-sqlite.6.0.4.nupkg.sha512",
     "/home/bono/.nuget/packages/fluentvalidation/12.1.1/fluentvalidation.12.1.1.nupkg.sha512",
     "/home/bono/.nuget/packages/fluentvalidation.dependencyinjectionextensions/12.1.1/fluentvalidation.dependencyinjectionextensions.12.1.1.nupkg.sha512",
     "/home/bono/.nuget/packages/mediatr/14.0.0/mediatr.14.0.0.nupkg.sha512",
