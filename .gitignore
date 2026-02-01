@@ -1,4 +1,41 @@
-/Arquitetura Tranferencia.txt
-/Arquitetura Transferencia MELHORADA.txt
-/Requisitos completos.txt
-/resumão de tudos os projetos.txt
+
+## --- ARTEFATOS DE COMPILAÇÃO ---
+# Ignora as pastas de saída (onde ficam as DLLs e executáveis)
+[Bb]in/
+[Oo]bj/
+
+## --- CACHE E LOGS ---
+# Ignora arquivos de cache do MSBuild e da IDE
+*.AssemblyInfoInputs.cache
+*.GeneratedMSil.cache
+*.assets.json
+*.nuget.g.props
+*.nuget.g.targets
+*.log
+*.cache
+
+## --- USER SPECIFIC (CONFIGURAÇÕES PESSOAIS) ---
+# Ignora configurações que só valem para o SEU computador
+.vscode/
+.idea/
+*.user
+*.userosscache
+*.sln.docstates
+
+## --- PUBLICAÇÃO ---
+# Ignora pastas de publicação final
+publish/
+/publish/
+
+## --- BANCO DE DADOS E SENHAS ---
+# Ignora bancos de dados locais e arquivos de segredos
+*.db
+*.db-shm
+*.db-wal
+appsettings.Development.json
+# (Opcional: descomente a linha abaixo se quiser esconder senhas do Git)
+# secrets.json
+
+## --- SISTEMA OPERACIONAL (LINUX/MAC/WIN) ---
+.DS_Store
+Thumbs.db
